@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meu Mapa do Mapbox</title>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+    #layer-menu {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 1;
+      background-color: #ffffff;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .layer-option {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div id='map'></div>
+  <div id='layer-menu'>
+    <div class='layer-option'>
+      <input type='checkbox' id='camada1' />
+      <label for='camada1'>Camada 1</label>
+    </div>
+    <div class='layer-option'>
+      <input type='checkbox' id='camada2' />
+      <label for='camada2'>Camada 2</label>
+    </div>
+    <div class='layer-option'>
+      <input type='checkbox' id='camada3' />
+      <label for='camada3'>Camada 3</label>
+    </div>
+  </div>
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoiYnJhbmRhbzg2IiwiYSI6ImNsaXhib3k4MzA1ZmUzcHIxN3J0Z3k2N2YifQ.-g2ePtoRTVJ7ezZd8LqVkA';
+    var map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/brandao86/clixi4sz002k301pd9icehzkl',
+      center: [-36.900, -9.60],
+      zoom: 8
+    });
+
+    map.on('load', function () {
+      var camada1Checkbox = document.getElementById('camada1');
+      camada1Checkbox.addEventListener('change', function () {
+        if (this.checked) {
+          map.addSource('camada1', {
+            type: 'geojson',
+            data: 'https://raw.githubusercontent.com/brandao86/mabx/main/map.geojson'
+          });
+
+          map.addLayer({
+            id: 'camada1',
+            type: 'line',
+            source: 'camada1',
+            paint: {
+              'line-color': '#ff0000',
+              'line-width': 2
+            }
+          });
+
+          var bounds = map.querySourceFeatures('camada1').reduce(function (bounds, feature) {
+            return bounds.extend(feature.geometry.coordinates);
+          }, new mapboxgl.LngLatBounds());
+
+          map.fitBounds(bounds, { padding: 50 });
+        } else {
+          map.removeLayer('camada1');
+          map.removeSource('camada1');
+        }
+      });
+
+      var camada2Checkbox = document.getElementById('camada2');
+      camada2Checkbox.addEventListener('change', function () {
+        if (this.checked) {
+          map.addSource('camada2', {
+            type: 'geojson',
+            data: 'https://raw.githubusercontent.com/brandao86/mabx/main/grotas100.geojson'
+          });
+
+          map.addLayer({
+            id: 'camada2',
+            type: 'fill',
+            source: 'camada2',
+            paint: {
+              'fill-color': '#00ff00',
+              'fill-opacity': 0.5
+            }
+          });
+
+          var bounds = map.querySourceFeatures('camada2').reduce(function (bounds, feature) {
+            return bounds.extend(feature.geometry.coordinates);
+          }, new mapboxgl.LngLatBounds());
+
+          map.fitBounds(bounds, { padding: 50 });
+        } else {
+          map.removeLayer('camada2');
+          map.removeSource('camada2');
+        }
+      });
+
+      var camada3Checkbox = document.getElementById('camada3');
+      camada3Checkbox.addEventListener('change', function () {
+        if (this.checked) {
+          map.addSource('camada3', {
+            type: 'geojson',
+            data: 'https://raw.githubusercontent.com/brandao86/mabx/main/saude.geojson'
+          });
+
+          map.addLayer({
+            id: 'camada3',
+            type: 'circle',
+            source: 'camada3',
+            paint: {
+              'circle-color': '#0000ff',
+              'circle-radius': 6
+            }
+          });
+
+          var bounds = map.querySourceFeatures('camada3').reduce(function (bounds, feature) {
+            return bounds.extend(feature.geometry.coordinates);
+          }, new mapboxgl.LngLatBounds());
+
+          map.fitBounds(bounds, { padding: 50 });
+        } else {
+          map.removeLayer('camada3');
+          map.removeSource('camada3');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+
+
